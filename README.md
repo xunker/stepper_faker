@@ -28,6 +28,12 @@ used to a similar same effect.
 
 Does not support micro-stepping, but may in the future.
 
+### Compiling
+
+[Download the code as a zip file](https://github.com/xunker/stepper_faker/archive/master.zip)
+or clone the repository. Open `stepper_faker.ino` in the Arduino IDE (version
+1.6.x or higher, please) and send it to your device.
+
 ### Wiring
 
 General wiring requirement: connect the ground from your controller running
@@ -69,6 +75,27 @@ controller running your software.
 Jan 13, 2016 - Add readme, update pins.
 
 Jan 12, 2016 - Initial Commit
+
+### To-Do
+
+In no particular order.
+
+* Remove BREADBOARDED_328 references in code.
+* Set IN2/IN3 swapping with a #define.
+* Set STEP and DIR pull-up or -down with #define.
+* Set STEP and DIR high/low behaviour with a #define.
+* Separate sleep timers per stepper.
+* Ability to disable sleep timer.
+* Add custom board files.
+* Add Fritzing wiring diagrams.
+* Conditionally [en/dis]able Serial, allow those pins to be used as SLEEP and ENABLE.
+* Include support for [MiniCore](https://github.com/MCUdude/MiniCore), allow xtal pins to be used as SLEEP and ENABLE.
+* PWM-based micro-stepping? Is it even worth it?
+* Test with atmega32u4 for Arduino Micro/Leonardo.
+* Test with attiny84.
+* Test with attiny4313.
+* Test with attiny1634.
+* Support attiny85? Not enough pins. Analog hack on RESET, or share STEP/DIR using analogRead? Can't use interrupts then.
 
 ### License
 
