@@ -9,24 +9,7 @@ Microstepping, enable and sleep are currently not supported because we're out
 of pins.
 
 
-Breadboarded atmega328 pins
-
-RESET           1     (19/A5) 28  Stepper C IN4
-RXD             2     (18/A4) 27  Stepper C IN3
-TXD             3     (17/A3) 26  Stepper C IN2
-Stepper A Dir   4 (2) (16/A2) 25  Stepper C IN1
-Stepper A Step  5 (3) (15/A1) 24  Stepper C Step
-Stepper A IN1   6 (4) (14/A0) 23  Stepper C Dir
-VCC             7             22  GND
-GND             8             21  AREF
-OSC1            9             20  VCC
-OSC2            10       (13) 19  Stepper B IN4
-Stepper A IN2   11 (5)   (12) 18  Stepper B IN3
-Stepper A IN3   12 (6)   (11) 17  Stepper B IN2
-Stepper A IN4   13 (7)   (10) 16  Stepper B IN1
-Stepper B Dir   14 (8)   (9)  15  Stepper B Step
-
-Pins with atmega328 in etched adapter board
+Atmega328 pins
 
 RESET           1     (19/A5) 28  Stepper A IN4
 RXD             2     (18/A4) 27  Stepper A IN3
@@ -43,29 +26,32 @@ Stepper B Step  12 (6)   (11) 17  Stepper C IN4
 Stepper C Step  13 (7)   (10) 16  Stepper C IN3
 Stepper C IN1   14 (8)   (9)  15  Stepper C IN2
 
+GRBL settings that work for me. My set-up is 5V 28BYJ-48 steppers, ULN2003A
+drivers, atmega328 running at 1mhz (internal):
 
-GRBL setting scratchpad (5v 28byj + uln2003 on 1mhz atmega328):
-$0=200
-$1=25
-$20=1
-$21=0
-$22=1
-$23=3
-$27=2
-$32=1
-$100=92
-$101=92
-$102=2500
-$110=250 (up to 350 with cooling, else skipped steps)
-$111=ditto
-$112=3 (up to 5, but may lose steps)
-$130=124
-$131=68
+Common to set-ups using above hardware:
 
-Travel Maximums:
-X: 153.5mm
-Y: 69mm
-Z: 22mm
+$0=200    Step pulse, microseconds
+$1=25     Step idle delay, msec
+
+Things specific to my machine using ~6mm diameter shaft spools, losely based on
+https://github.com/dherrendoerfer/uCNC_controller/tree/master/Extras/Plotter_v3:
+
+$20=1     Enable soft limits.
+$21=0     Disable hard limits.
+$22=1     Enable homing cycle.
+$23=3     Homing dir invert mask.
+$27=2     Homing pull-off.
+$32=1     Enable laser mode. $22 must be enabled for this to be enabled.
+$100=92   X steps/mm.
+$101=92   Y steps/mm.
+$102=2500 Z steps/mm.
+$110=250  X max rate, mm/min. Can be up to 350 with cooling. Based on $100.
+$111=250  Y max rate, mm/min. Can be up to 350 with cooling. Based on $101.
+$112=3    Z max rate, mm/min. Can be up to 5 with cooling. Based on $102.
+$130=124  X max travel with something on the build plate. 153.5 when empty.
+$131=68   Y max travel.
+$132=22   Z max travel.
 
 */
 
@@ -137,24 +123,24 @@ Z: 22mm
 #define STEPS_PER_REVOLUTION 200
 
 #ifdef ADAPTER_328
-  Stepper stepperA(STEPS_PER_REVOLUTION, A2, A3, A4, A5);
+  Stepper stepperA(STEPS_PER_REVOLUTION, A2, A4, A3, A5);
 #else
-  Stepper stepperA(STEPS_PER_REVOLUTION, 4, 5, 6, 7);
+  Stepper stepperA(STEPS_PER_REVOLUTION, 4, 6, 5, 7);
 #endif
 
 #ifdef STEPPER_B
   #ifdef ADAPTER_328
-    Stepper stepperB(STEPS_PER_REVOLUTION, 12, 13, A0, A1);
+    Stepper stepperB(STEPS_PER_REVOLUTION, 12, A0, 13, A1);
   #else
-    Stepper stepperB(STEPS_PER_REVOLUTION, 10, 11, 12, 13);
+    Stepper stepperB(STEPS_PER_REVOLUTION, 10, 12, 11, 13);
   #endif
 #endif
 
 #ifdef STEPPER_C
   #ifdef ADAPTER_328
-    Stepper stepperC(STEPS_PER_REVOLUTION, 8, 9, 10, 11);
+    Stepper stepperC(STEPS_PER_REVOLUTION, 8, 10, 9, 11);
   #else
-    Stepper stepperC(STEPS_PER_REVOLUTION, A2, A3, A4, A5);
+    Stepper stepperC(STEPS_PER_REVOLUTION, A2, A4, A3, A5);
   #endif
 #endif
 
